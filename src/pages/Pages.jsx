@@ -11,34 +11,27 @@ function Profile() {
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // FETCH USER PROFILE
+  // FETCH PROFILE USER
   const fetchUser = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/profile/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await axios.get(`http://localhost:5000/api/users/profile/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
 
       setUser(res.data);
       setIsFollowing(res.data.followers.includes(loggedUser._id));
     } catch (err) {
-      console.log("Profile fetch error:", err);
+      console.log(err);
     }
   };
 
-  // FETCH USER POSTS
+  // FETCH POSTS FROM THAT USER
   const fetchPosts = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/posts/${id}`
-      );
+      const res = await axios.get(`http://localhost:5000/api/posts/user/${id}`);
       setPosts(res.data);
     } catch (err) {
-      console.log("Posts fetch error:", err);
+      console.log(err);
     }
   };
 
@@ -47,43 +40,36 @@ function Profile() {
     fetchPosts();
   }, [id]);
 
-  // FOLLOW / UNFOLLOW
   const toggleFollow = async () => {
     try {
       await axios.put(
-        `http://localhost:5000/api/users/${
-          isFollowing ? "unfollow" : "follow"
-        }/${id}`,
+        `http://localhost:5000/api/users/${isFollowing ? "unfollow" : "follow"}/${id}`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
 
-      fetchUser();
+      fetchUser(); 
     } catch (err) {
       console.log(err);
     }
   };
 
-  if (!user)
-    return (
-      <p style={{ color: "white", marginTop: "90px", textAlign: "center" }}>
-        Loading...
-      </p>
-    );
+  if (!user) return <p style={{ color: "white", marginTop: "90px" }}>Loading...</p>;
 
   return (
     <div className="profile-wrapper">
-      {/* PROFILE HEADER */}
+
+      {/* TOP SECTION */}
       <div className="profile-header">
+        
         <img
-          src={
-            user.dp ? `http://localhost:5000/${user.dp}` : "/default.png"
-          }
+          src={user.dp ? `http://localhost:5000/${user.dp}` : "/default.png"}
           className="profile-dp"
           alt="dp"
         />
 
         <div className="profile-info">
+
           <div className="profile-row">
             <h2>{user.username}</h2>
 
@@ -97,15 +83,9 @@ function Profile() {
           </div>
 
           <div className="profile-stats">
-            <span>
-              <b>{posts.length}</b> posts
-            </span>
-            <span>
-              <b>{user.followers.length}</b> followers
-            </span>
-            <span>
-              <b>{user.following.length}</b> following
-            </span>
+            <span><b>{posts.length}</b> posts</span>
+            <span><b>{user.followers.length}</b> followers</span>
+            <span><b>{user.following.length}</b> following</span>
           </div>
 
           <p className="profile-bio">{user.bio || "No bio yet."}</p>

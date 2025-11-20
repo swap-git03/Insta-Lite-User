@@ -1,0 +1,61 @@
+.users-container {
+  max-width: 600px;
+  margin: 80px auto;
+  padding: 20px;
+  color: white;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.user-card {
+  background: #111;
+  border: 1px solid #222;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-dp {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.u-name {
+  font-weight: bold;
+}
+
+.u-email {
+  font-size: 13px;
+  color: #999;
+}
+
+.follow-btn {
+  padding: 8px 14px;
+  background: #0095f6;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.unfollow-btn {
+  padding: 8px 14px;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
