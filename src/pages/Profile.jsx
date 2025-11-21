@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+ 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -10,8 +12,21 @@ function Profile() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
+  const logout = () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  window.location.href = "/login";
+};
 
-  // FETCH USER PROFILE
+  // Post menu state
+  const [menuPost, setMenuPost] = useState(null);
+
+  const openMenu = (post) => setMenuPost(post);
+  const closeMenu = () => setMenuPost(null);
+
+  // ==================
+  // FETCH PROFILE
+  // ==================
   const fetchUser = async () => {
     try {
       const res = await axios.get(
@@ -30,7 +45,9 @@ function Profile() {
     }
   };
 
-  // FETCH USER POSTS
+  // ==================
+  // FETCH POSTS
+  // ==================
   const fetchPosts = async () => {
     try {
       const res = await axios.get(
@@ -47,7 +64,9 @@ function Profile() {
     fetchPosts();
   }, [id]);
 
+  // ==================
   // FOLLOW / UNFOLLOW
+  // ==================
   const toggleFollow = async () => {
     try {
       await axios.put(
@@ -64,6 +83,45 @@ function Profile() {
     }
   };
 
+  // ==================
+  // DELETE POST
+  // ==================
+  const deletePost = async (postId) => {
+    if (!window.confirm("Delete this post?")) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      closeMenu();
+      fetchPosts();
+    } catch (err) {
+      console.log("Delete error:", err);
+    }
+  };
+
+  // ==================
+  // EDIT POST
+  // ==================
+  const editPost = async (post) => {
+    const newCaption = prompt("Enter new caption:", post.caption);
+    if (newCaption === null) return;
+
+    try {
+      await axios.put(
+        `http://localhost:5000/api/posts/${post._id}`,
+        { caption: newCaption },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+
+      closeMenu();
+      fetchPosts();
+    } catch (err) {
+      console.log("Edit error:", err);
+    }
+  };
+
   if (!user)
     return (
       <p style={{ color: "white", marginTop: "90px", textAlign: "center" }}>
@@ -73,7 +131,10 @@ function Profile() {
 
   return (
     <div className="profile-wrapper">
-      {/* PROFILE HEADER */}
+
+      {/* ====================== */}
+      {/* HEADER */}
+      {/* ====================== */}
       <div className="profile-header">
         <img
           src={
@@ -88,13 +149,23 @@ function Profile() {
             <h2>{user.username}</h2>
 
             {loggedUser._id === id ? (
-              <button className="edit-btn">Edit Profile</button>
+              <button
+                className="edit-btn"
+                onClick={() => (window.location.href = "/edit-profile")}
+              >
+                Edit Profile
+              </button>
             ) : (
               <button className="follow-btn" onClick={toggleFollow}>
                 {isFollowing ? "Unfollow" : "Follow"}
               </button>
             )}
           </div>
+            {loggedUser._id === id && (
+               <button className="logout-btn" onClick={logout}>
+                  Logout
+               </button>
+            )}
 
           <div className="profile-stats">
             <span>
@@ -112,18 +183,51 @@ function Profile() {
         </div>
       </div>
 
+      {/* ====================== */}
       {/* POSTS GRID */}
+      {/* ====================== */}
       <div className="profile-posts-grid">
         {posts.map((p) => (
-          <img
-            key={p._id}
-            src={`http://localhost:5000/${p.image}`}
-            alt="post"
-            className="profile-post"
-            onClick={() => (window.location.href = `/post/${p._id}`)}
-          />
+          <div className="post-box" key={p._id}>
+            <img
+              src={`http://localhost:5000/${p.image}`}
+              alt="post"
+              className="profile-post"
+              onClick={() => (window.location.href = `/post/${p._id}`)}
+            />
+
+            {loggedUser._id === id && (
+              <div className="post-menu-icon" onClick={() => openMenu(p)}>
+                ⋮
+              </div>
+            )}
+          </div>
         ))}
       </div>
+
+      {/* ====================== */}
+      {/* EDIT/DELETE MENU */}
+      {/* ====================== */}
+      {menuPost && (
+        <div className="menu-overlay" onClick={closeMenu}>
+          <div className="menu-box" onClick={(e) => e.stopPropagation()}>
+            <p
+              className="menu-item delete"
+              onClick={() => deletePost(menuPost._id)}
+            >
+              Delete Post
+            </p>
+
+            <p className="menu-item edit" onClick={() => editPost(menuPost)}>
+              Edit Caption
+            </p>
+
+            <p className="menu-item cancel" onClick={closeMenu}>
+              Cancel
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

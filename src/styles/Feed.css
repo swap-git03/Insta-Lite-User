@@ -1,25 +1,29 @@
-.feed-container {
-  width: 100%;
+/* ================== FEED WRAPPER ================== */
+.feed-main {
+  flex: 1;
   max-width: 600px;
-  margin: 20px auto;
-  padding-bottom: 50px;
+  margin: 0 auto; /* CENTER PERFECTLY */
+  margin-top: 20px;
+  padding-bottom: 40px;
 }
 
-/* Post Card */
+/* FEED CARD */
 .post-card {
   background: #111;
   border: 1px solid #222;
   border-radius: 12px;
   margin-bottom: 25px;
   overflow: hidden;
+  width: 100%;
+  max-width: 600px;
 }
 
-/* Post Header */
+/* POST HEADER */
 .post-header {
   display: flex;
+  gap: 12px;
   align-items: center;
   padding: 12px;
-  gap: 10px;
 }
 
 .post-dp {
@@ -29,96 +33,27 @@
   object-fit: cover;
 }
 
-.post-username {
-  font-weight: bold;
-}
-
-/* Post Image */
 .post-image {
   width: 100%;
-  height: auto;
 }
 
-/* Actions */
 .post-actions {
-  display: flex;
-  padding: 10px 15px;
+  padding: 12px;
 }
 
 .like-btn {
   background: none;
   border: none;
   font-size: 26px;
-  color: white;
   cursor: pointer;
-}
-
-.like-btn:hover {
-  color: #ff4d4d;
-}
-
-/* Likes */
-.post-likes {
-  padding: 0 15px;
-  font-weight: bold;
-}
-
-/* Caption */
-.post-caption {
-  padding: 0 15px 8px;
-  color: #ddd;
-}
-
-/* Comments */
-.post-comments {
-  padding: 0 15px 12px;
-  color: #999;
-  cursor: pointer;
-}
-
-.no-posts {
-  text-align: center;
-  padding: 20px;
-  color: #777;
-}
-.feed-wrapper {
-  margin-top: 80px; /* prevents feed from going inside navbar */
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.feed-container {
-  width: 100%;
-  max-width: 600px;
-  padding-bottom: 40px;
-}
-
-
-.comment-box {
-  padding: 10px 15px;
-}
-
-.comment-input {
-  width: 100%;
-  padding: 8px 12px;
-  background: #222;
-  border: none;
-  border-radius: 8px;
   color: white;
 }
 
-.comment-input:focus {
-  outline: 1px solid #0095f6;
-}
-.view-comments {
-  padding: 0 15px;
-  color: #999;
-  font-size: 14px;
-  margin-top: -8px;
-  cursor: pointer;
-}
-
-.view-comments:hover {
-  color: #ccc;
+/* MOBILE */
+@media (max-width: 900px) {
+  .feed-main {
+    margin: 0 auto !important;
+    width: 100%;
+    padding: 10px;
+  }
 }

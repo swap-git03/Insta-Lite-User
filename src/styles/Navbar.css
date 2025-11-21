@@ -1,103 +1,145 @@
+/* ================= NAVBAR ================= */
 .nav {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 60px;
+  height: 80px;
   background: #111;
+
+  display: grid;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
+  grid-template-columns: 220px 1fr 220px; /* PERFECT CENTER GRID */
+  align-items: center;
+
+  padding: 0 20px;
   z-index: 9999;
-
-  /* Smooth hide animation */
-  transition: transform 0.35s ease-in-out, opacity 0.25s ease-in-out;
 }
 
-/* Visible */
-.nav-show {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* Hidden smoothly */
-.nav-hide {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-
-
-/* Left side */
+/* LEFT AREA (LOGO) */
 .nav-left {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 }
 
 .nav-logo {
-  width: 150px;
-  height: auto;
+  height: 70px;         /* BIGGER & CLEAN */
+  width: auto;          /* ORIGINAL RATIO (NO DISTORTION) */
+  object-fit: contain;
+  margin-left: 50px;
 }
 
-/* Center - Search Bar */
+
+/* CENTER AREA (SEARCH) */
 .nav-center {
-  flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: center; /* PERFECT CENTERING */
 }
 
 .nav-search {
-  width: 350px;
-  max-width: 80%;
-  padding: 10px 15px;
+  width: 460px;
+  max-width: 100%;
+  padding: 11px 10px;
+  margin-left: 325px;   /* YOUR FIXED POSITION – WE KEEP THIS */
   background: #222;
-  border: none;
   border-radius: 10px;
+  border: none;
   color: white;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .nav-search:focus {
-  outline: 2px solid #0095F6;
+  outline: 2px solid #0095f6;
 }
 
-/* Right side icons */
+
+/* RIGHT AREA (ICONS) */
 .nav-right {
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  gap: 18px;
+  gap: 22px;
 }
 
 .nav-icon {
-  font-size: 22px;
+  font-size: 24px;
   color: white;
+  cursor: pointer;
 }
 
 .nav-icon:hover {
-  color: #0095F6;
+  color: #0095f6;
 }
 
 .nav-dp {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-/* Remove any unwanted lines */
-.nav *,
-.nav::before,
-.nav::after {
-  border: none !important;
-  box-shadow: none !important;
+
+/* SEARCH DROPDOWN */
+.search-results {
+  position: absolute;
+  top: 82px;
+  width: 360px;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 10px;
+  padding: 10px 0;
+  z-index: 9999;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
+
+/* ========================================================= */
+/* ====================== RESPONSIVE FIXES ================= */
+/* ========================================================= */
+
+/* Tablets – reduce search width & margin */
+@media (max-width: 1200px) {
+  .nav-search {
+    width: 350px;
+    margin-left: 150px; /* still centered but not overflowing */
+  }
+}
+
+/* Small laptops */
+@media (max-width: 1024px) {
+  .nav-search {
+    width: 300px;
+    margin-left: 80px;
+  }
+  .nav-logo {
+    height: 60px;
+    margin-left: 20px;
+  }
+}
+
+/* Mobile – hide search bar (Instagram also hides search on mobile) */
+@media (max-width: 900px) {
   .nav-center {
     display: none;
   }
 
   .nav-logo {
-    width: 120px;
+    height: 55px;
+    margin-left: 10px;
+  }
+
+  .nav-right {
+    gap: 15px;
+  }
+
+  .nav-icon {
+    font-size: 20px;
+  }
+}
+
+/* Very small screen (smaller phones) */
+@media (max-width: 480px) {
+  .nav-logo {
+    height: 45px;
   }
 }

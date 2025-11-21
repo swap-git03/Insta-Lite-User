@@ -1,0 +1,25 @@
+/* WRAPS SIDEBAR + FEED */
+.layout {
+  display: flex;
+  width: 100%;
+  margin-top: 80px; /* EXACT NAVBAR HEIGHT */
+}
+
+/* CONTENT AREA */
+.layout-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+
+  /* KEEP feed centered while sidebar exists */
+  margin-left: 220px; /* same as sidebar width */
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .layout-content {
+    margin-left: 0;
+    padding: 10px;
+  }
+}

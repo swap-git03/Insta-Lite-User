@@ -1,0 +1,68 @@
+.edit-wrapper {
+  max-width: 700px;
+  margin: 110px auto;
+  padding: 20px;
+  color: white;
+}
+
+.edit-card {
+  background: #0f0f0f;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #222;
+}
+
+.edit-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.edit-dp {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #222;
+  border: 2px solid #333;
+}
+
+.file-label {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: #222;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid #333;
+}
+.file-label input { display: none; }
+
+.edit-input, .edit-textarea {
+  width: 100%;
+  background: #111;
+  border: 1px solid #333;
+  padding: 10px;
+  color: white;
+  border-radius: 8px;
+  height: 100px;
+  resize: vertical;
+}
+
+.edit-textarea::placeholder {
+  color: #777;
+}
+
+
+.edit-textarea { height: 100px; resize: vertical; }
+
+.edit-actions { display:flex; gap:12px; margin-top:6px; }
+.save-btn {
+  background: #0095f6; color: white; padding: 10px 16px; border:none; border-radius: 8px; cursor:pointer;
+}
+.cancel-btn {
+  background: #333; color: white; padding: 10px 16px; border:none; border-radius: 8px; cursor:pointer;
+}
+
+.example { color: #999; font-size: 12px; margin-top: 12px; }
