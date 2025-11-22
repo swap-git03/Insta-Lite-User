@@ -1,25 +1,32 @@
+/* FULL WRAPPER (CENTER PAGE LIKE INSTAGRAM PEOPLE PAGE) */
+.users-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 90px;
+}
+
+/* INNER CONTAINER */
 .users-container {
-  max-width: 600px;
-  margin: 80px auto;
+  width: 100%;
+  max-width: 550px;
   padding: 20px;
   color: white;
 }
 
-h2 {
-  margin-bottom: 20px;
-}
-
+/* USER CARD */
 .user-card {
   background: #111;
   border: 1px solid #222;
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
+/* LEFT SIDE */
 .user-left {
   display: flex;
   align-items: center;
@@ -27,35 +34,38 @@ h2 {
 }
 
 .user-dp {
-  width: 45px;
-  height: 45px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .u-name {
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .u-email {
   font-size: 13px;
-  color: #999;
+  color: #aaa;
 }
 
+/* BUTTONS */
 .follow-btn {
   padding: 8px 14px;
   background: #0095f6;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   color: white;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .unfollow-btn {
   padding: 8px 14px;
-  background: #333;
-  border: 1px solid #555;
-  border-radius: 6px;
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 8px;
   color: white;
   cursor: pointer;
+  font-weight: 500;
 }

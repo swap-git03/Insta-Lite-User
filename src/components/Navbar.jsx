@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import "../styles/Navbar.css";
 
 function Navbar() {
@@ -25,7 +25,7 @@ function Navbar() {
 
   const profileLink = user?._id ? `/profile/${user._id}` : "/profile";
 
-  // Navbar hide on scroll (mobile + desktop)
+  // Navbar hide on scroll
   const [showNav, setShowNav] = useState(true);
   let lastScroll = 0;
 
@@ -34,10 +34,8 @@ function Navbar() {
       const current = window.pageYOffset;
 
       if (current > lastScroll && current > 10) {
-        // scrolling DOWN → hide
         setShowNav(false);
       } else {
-        // scrolling UP → show
         setShowNav(true);
       }
 
@@ -66,17 +64,21 @@ function Navbar() {
     }
 
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/search/${val}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await API.get(`/users/search/${val}`);
       setResults(res.data);
     } catch (err) {
       console.log(err);
     }
   };
+
+const fileURL = (path) => {
+  if (!path) return "/default.png";
+
+  if (path.startsWith("http")) return path;
+
+  return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
+};
+
 
   return (
     <nav className={`nav ${showNav ? "nav-show" : "nav-hide"}`}>
@@ -110,12 +112,7 @@ function Navbar() {
                   setResults([]);
                 }}
               >
-                <img
-                  src={
-                    u.dp ? `http://localhost:5000/${u.dp}` : "/default.png"
-                  }
-                  alt="dp"
-                />
+                <img src={fileURL(u.dp)} alt="dp" />
                 <span>{u.username}</span>
               </Link>
             ))}
@@ -139,15 +136,7 @@ function Navbar() {
 
         <Link to={profileLink} className="nav-icon">
           {user?.dp ? (
-            <img
-              src={
-                user.dp.startsWith("http")
-                  ? user.dp
-                  : `http://localhost:5000/${user.dp}`
-              }
-              className="nav-dp"
-              alt="dp"
-            />
+            <img src={fileURL(user.dp)} className="nav-dp" alt="dp" />
           ) : (
             <i className="bi bi-person-circle"></i>
           )}

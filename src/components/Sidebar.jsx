@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "../styles/Sidebar.css";
 import { useState, useEffect } from "react";
+import API from "../api/axios";
 
 function Sidebar({ user, suggestions }) {
   const [open, setOpen] = useState(false);
@@ -9,6 +10,22 @@ function Sidebar({ user, suggestions }) {
   const safeUser = user || {};
   const safeSuggestions = Array.isArray(suggestions) ? suggestions : [];
 
+  /* ------------------------------
+      FIXED IMAGE URL GENERATOR
+  ------------------------------ */
+/* ------------------------------
+      FIXED IMAGE URL GENERATOR
+------------------------------ */
+const fileURL = (path) => {
+  if (!path) return "/default.png";
+
+  if (path.startsWith("http")) return path;
+
+  // FIX: remove /api from baseURL for images
+  return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
+};
+
+
   /* ============================
      HIDE BUTTON ON SCROLL 
   ============================ */
@@ -16,15 +33,14 @@ function Sidebar({ user, suggestions }) {
     let lastScrollY = window.scrollY;
 
     const handleScroll = () => {
-      if (open) return; // don't hide when sidebar open
+      if (open) return;
 
       if (window.scrollY > lastScrollY) {
-        // scrolling down → hide
         setShowToggle(false);
       } else {
-        // scrolling up → show
         setShowToggle(true);
       }
+
       lastScrollY = window.scrollY;
     };
 
@@ -32,18 +48,12 @@ function Sidebar({ user, suggestions }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [open]);
 
-
   /* ============================
      DISABLE BACKGROUND SCROLL 
   ============================ */
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = open ? "hidden" : "auto";
   }, [open]);
-
 
   return (
     <>
@@ -55,21 +65,14 @@ function Sidebar({ user, suggestions }) {
       )}
 
       {/* OVERLAY */}
-      {open && (
-        <div className="overlay" onClick={() => setOpen(false)}></div>
-      )}
+      {open && <div className="overlay" onClick={() => setOpen(false)}></div>}
 
       {/* SIDEBAR */}
       <aside className={`sidebar ${open ? "open" : ""}`}>
-        
         {/* USER BOX */}
         <div className="sidebar-user-box">
           <img
-            src={
-              safeUser.dp
-                ? `http://localhost:5000/${safeUser.dp}`
-                : "/default.png"
-            }
+            src={fileURL(safeUser.dp)}
             className="sidebar-user-dp"
             alt="dp"
           />
@@ -103,11 +106,7 @@ function Sidebar({ user, suggestions }) {
           {safeSuggestions.map((s) => (
             <div key={s._id} className="side-suggest-user">
               <img
-                src={
-                  s.dp
-                    ? `http://localhost:5000/${s.dp}`
-                    : "/default.png"
-                }
+                src={fileURL(s.dp)}
                 className="side-suggest-dp"
                 alt="dp"
               />

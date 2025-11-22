@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import "../styles/EditProfile.css";
 import { useNavigate } from "react-router-dom";
 
@@ -9,15 +9,23 @@ function EditProfile() {
   const stored = localStorage.getItem("user");
   const currentUser = stored ? JSON.parse(stored) : null;
   const userId = currentUser?._id;
-    
+
+const fileURL = (path) => {
+  if (!path) return "/default.png";
+  if (path.startsWith("http")) return path;
+  return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
+};
+
+
   const [username, setUsername] = useState(currentUser?.username || "");
   const [bio, setBio] = useState(currentUser?.bio || "");
   const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(currentUser?.dp ? `http://localhost:5000/${currentUser.dp}` : "/default.png");
+  const [preview, setPreview] = useState(
+    currentUser?.dp ? fileURL(currentUser.dp) : "/default.png"
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // if not logged in redirect to login
     if (!currentUser) navigate("/login");
   }, []);
 
@@ -25,7 +33,7 @@ function EditProfile() {
     const f = e.target.files[0];
     if (!f) return;
     setFile(f);
-    setPreview(URL.createObjectURL(f));
+    setPreview(URL.createObjectURL(f)); // temporary preview
   };
 
   const handleSave = async () => {
@@ -36,18 +44,12 @@ function EditProfile() {
       formData.append("bio", bio);
       if (file) formData.append("dp", file);
 
-      const res = await axios.put(
-        `http://localhost:5000/api/users/profile/${userId}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await API.put(`/users/profile/${userId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      // update localStorage user info so navbar and profile reflect changes
       const newUser = res.data.user;
       localStorage.setItem("user", JSON.stringify(newUser));
 
@@ -77,19 +79,27 @@ function EditProfile() {
         </div>
 
         <label>Username</label>
-        <input value={username} onChange={(e) => setUsername(e.target.value)} className="edit-input"/>
+        <input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="edit-input"
+        />
 
         <label>Bio</label>
-        <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="edit-textarea"/>
+        <textarea
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          className="edit-textarea"
+        />
 
         <div className="edit-actions">
           <button className="save-btn" onClick={handleSave} disabled={loading}>
             {loading ? "Saving..." : "Save"}
           </button>
-          <button className="cancel-btn" onClick={() => navigate(-1)}>Cancel</button>
+          <button className="cancel-btn" onClick={() => navigate(-1)}>
+            Cancel
+          </button>
         </div>
-
-
       </div>
     </div>
   );

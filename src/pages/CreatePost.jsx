@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import Cropper from "react-easy-crop";
 import getCroppedImg from "../utils/cropImage";
 import "../styles/CreatePost.css";
@@ -15,10 +15,9 @@ function CreatePost() {
   const [caption, setCaption] = useState("");
 
   // aspect ratio state
-  const [aspect, setAspect] = useState(1); // default square 1:1
-
-  const onCropComplete = useCallback((_, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
+  const [aspect, setAspect] = useState(1); 
+  const onCropComplete = useCallback((_, croppedPixels) => {
+    setCroppedAreaPixels(croppedPixels);
   }, []);
 
   const handleImageChange = (e) => {
@@ -42,9 +41,8 @@ function CreatePost() {
     formData.append("caption", caption);
 
     try {
-      await axios.post("http://localhost:5000/api/posts", formData, {
+      await API.post("/posts", formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -93,7 +91,7 @@ function CreatePost() {
             image={preview}
             crop={crop}
             zoom={zoom}
-            aspect={aspect} // dynamic aspect ratio
+            aspect={aspect}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={onCropComplete}

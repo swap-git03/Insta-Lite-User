@@ -79,3 +79,49 @@
   margin-left: 10px;
   font-size: 15px;
 }
+.ig-suggest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.ig-suggest-card {
+  background: #111;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid #222;
+}
+
+.ig-suggest-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.ig-suggest-username {
+  color: white;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.ig-view-btn {
+  background: #0095f6;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+/* CAMERA ICON — Bigger & Centered */
+.ig-icon i.bi-camera {
+  font-size: 45px;     /* increase size */
+  color: #888;         /* optional: softer gray like Instagram */
+  display: block;
+  margin: 0 auto 10px;
+  margin-left: 12px; /* center + spacing */
+}

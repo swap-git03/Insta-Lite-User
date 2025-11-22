@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+ 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import API from "../api/axios";
 import "../styles/Profile.css";
 
 function Profile() {
@@ -14,9 +16,7 @@ function Profile() {
   // FETCH PROFILE USER
   const fetchUser = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/users/profile/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const res = await API.get(`/users/profile/${id}`);
 
       setUser(res.data);
       setIsFollowing(res.data.followers.includes(loggedUser._id));
@@ -28,7 +28,7 @@ function Profile() {
   // FETCH POSTS FROM THAT USER
   const fetchPosts = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/posts/user/${id}`);
+      const res = await API.get(`/posts/user/${id}`);
       setPosts(res.data);
     } catch (err) {
       console.log(err);
@@ -42,10 +42,9 @@ function Profile() {
 
   const toggleFollow = async () => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/users/${isFollowing ? "unfollow" : "follow"}/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      await API.put(
+        `/users/${isFollowing ? "unfollow" : "follow"}/${id}`,
+        {}
       );
 
       fetchUser(); 
@@ -63,7 +62,7 @@ function Profile() {
       <div className="profile-header">
         
         <img
-          src={user.dp ? `http://localhost:5000/${user.dp}` : "/default.png"}
+          src={user.dp ? `${API.defaults.baseURL.replace("/api","")}/${user.dp}` : "/default.png"}
           className="profile-dp"
           alt="dp"
         />
@@ -97,7 +96,7 @@ function Profile() {
         {posts.map((p) => (
           <img
             key={p._id}
-            src={`http://localhost:5000/${p.image}`}
+            src={`${API.defaults.baseURL.replace("/api","")}/${p.image}`}
             alt="post"
             className="profile-post"
             onClick={() => (window.location.href = `/post/${p._id}`)}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import "../styles/Users.css";
 import { Link } from "react-router-dom";
 
@@ -8,14 +8,13 @@ function Users() {
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users/all", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const res = await API.get("/users/all");
       setUsers(res.data);
     } catch (err) {
       console.log("Users error:", err);
@@ -24,11 +23,7 @@ function Users() {
 
   const followUser = async (id) => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/users/follow/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
+      await API.put(`/users/follow/${id}`, {});
       fetchUsers();
     } catch (err) {
       console.log(err);
@@ -37,15 +32,18 @@ function Users() {
 
   const unfollowUser = async (id) => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/users/unfollow/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
+      await API.put(`/users/unfollow/${id}`, {});
       fetchUsers();
     } catch (err) {
       console.log(err);
     }
+  };
+
+  // FIXED: convert DP to correct backend URL
+  const fileURL = (path) => {
+    if (!path) return "/default.png";
+    if (path.startsWith("http")) return path;
+    return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
   };
 
   return (
@@ -57,7 +55,7 @@ function Users() {
             <div className="user-card" key={u._id}>
               <div className="user-left">
                 <img
-                  src={u.dp ? `http://localhost:5000/${u.dp}` : "/default.png"}
+                  src={fileURL(u.dp)}
                   className="user-dp"
                   alt="dp"
                 />
@@ -88,6 +86,7 @@ function Users() {
             </div>
           ))}
         </div>
+
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
  
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import API from "../api/axios";
 import "../styles/Profile.css";
 
 function Profile() {
@@ -12,11 +12,12 @@ function Profile() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
+
   const logout = () => {
-  localStorage.removeItem("user");
-  localStorage.removeItem("token");
-  window.location.href = "/login";
-};
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
   // Post menu state
   const [menuPost, setMenuPost] = useState(null);
@@ -24,19 +25,19 @@ function Profile() {
   const openMenu = (post) => setMenuPost(post);
   const closeMenu = () => setMenuPost(null);
 
+  // FIXED: convert dp/image to full backend URL
+  const fileURL = (path) => {
+    if (!path) return "/default.png";
+    if (path.startsWith("http")) return path;
+    return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
+  };
+
   // ==================
   // FETCH PROFILE
   // ==================
   const fetchUser = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/profile/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await API.get(`/users/profile/${id}`);
 
       setUser(res.data);
       setIsFollowing(res.data.followers.includes(loggedUser._id));
@@ -50,9 +51,7 @@ function Profile() {
   // ==================
   const fetchPosts = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/posts/${id}`
-      );
+      const res = await API.get(`/users/posts/${id}`);
       setPosts(res.data);
     } catch (err) {
       console.log("Posts fetch error:", err);
@@ -69,14 +68,7 @@ function Profile() {
   // ==================
   const toggleFollow = async () => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/users/${
-          isFollowing ? "unfollow" : "follow"
-        }/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
-
+      await API.put(`/users/${isFollowing ? "unfollow" : "follow"}/${id}`, {});
       fetchUser();
     } catch (err) {
       console.log(err);
@@ -90,10 +82,7 @@ function Profile() {
     if (!window.confirm("Delete this post?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-
+      await API.delete(`/posts/${postId}`);
       closeMenu();
       fetchPosts();
     } catch (err) {
@@ -109,12 +98,7 @@ function Profile() {
     if (newCaption === null) return;
 
     try {
-      await axios.put(
-        `http://localhost:5000/api/posts/${post._id}`,
-        { caption: newCaption },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
-
+      await API.put(`/posts/${post._id}`, { caption: newCaption });
       closeMenu();
       fetchPosts();
     } catch (err) {
@@ -137,9 +121,7 @@ function Profile() {
       {/* ====================== */}
       <div className="profile-header">
         <img
-          src={
-            user.dp ? `http://localhost:5000/${user.dp}` : "/default.png"
-          }
+          src={fileURL(user.dp)}
           className="profile-dp"
           alt="dp"
         />
@@ -161,11 +143,12 @@ function Profile() {
               </button>
             )}
           </div>
-            {loggedUser._id === id && (
-               <button className="logout-btn" onClick={logout}>
-                  Logout
-               </button>
-            )}
+
+          {loggedUser._id === id && (
+            <button className="logout-btn" onClick={logout}>
+              Logout
+            </button>
+          )}
 
           <div className="profile-stats">
             <span>
@@ -190,7 +173,7 @@ function Profile() {
         {posts.map((p) => (
           <div className="post-box" key={p._id}>
             <img
-              src={`http://localhost:5000/${p.image}`}
+              src={fileURL(p.image)}
               alt="post"
               className="profile-post"
               onClick={() => (window.location.href = `/post/${p._id}`)}
