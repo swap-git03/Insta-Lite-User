@@ -1,59 +1,81 @@
-/* ================== FEED WRAPPER ================== */
+/* FEED WRAPPER */
 .feed-main {
-  flex: 1;
+  width: 100%;
   max-width: 600px;
-  margin: 0 auto; /* CENTER PERFECTLY */
-  margin-top: 20px;
-  padding-bottom: 40px;
+  margin: 0 auto;
+  padding-top: 20px;
 }
 
-/* FEED CARD */
+/* POST CARD */
 .post-card {
   background: #111;
   border: 1px solid #222;
   border-radius: 12px;
-  margin-bottom: 25px;
-  overflow: hidden;
+  margin: 20px 0;
   width: 100%;
   max-width: 600px;
+  overflow: hidden;
 }
 
-/* POST HEADER */
+/* HEADER */
 .post-header {
   display: flex;
-  gap: 12px;
   align-items: center;
+  gap: 10px;
   padding: 12px;
 }
 
 .post-dp {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.post-image {
-  width: 100%;
+.post-username {
+  font-size: 15px;
+  font-weight: 500;
 }
 
+.post-img-box {
+  width: 100%;
+  background: #000;
+  overflow: hidden;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* LIKE SECTION */
 .post-actions {
   padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent !important;
 }
 
 .like-btn {
-  background: none;
+  background: transparent !important;
   border: none;
-  font-size: 26px;
   cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.like-btn i {
+  font-size: 30px;
   color: white;
 }
 
-/* MOBILE */
-@media (max-width: 900px) {
-  .feed-main {
-    margin: 0 auto !important;
-    width: 100%;
-    padding: 10px;
-  }
+/* LIKE TEXT ALIGNED CENTER BELOW ICON */
+.post-likes {
+  margin-left: 10px;
+  font-size: 15px;
 }

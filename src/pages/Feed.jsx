@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/Feed.css";
@@ -28,7 +30,7 @@ function Feed() {
     }
   };
 
-  // FETCH USERS
+  // FETCH USERS (for suggestions)
   const fetchUsers = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/users/all", {
@@ -82,28 +84,46 @@ function Feed() {
   return (
     <div className="feed-main">
 
-      {/* SHOW SUGGESTIONS ONLY IF NO POSTS */}
+      {/* EMPTY FEED UI LIKE INSTAGRAM */}
       {posts.length === 0 && (
-        <div className="empty-suggest-box">
-          <h3>People You May Know</h3>
-          {users.map((u) => (
-            <div className="suggest-user" key={u._id}>
-              <img
-                src={u.dp ? `http://localhost:5000/${u.dp}` : "/default.png"}
-                className="suggest-dp"
-              />
-              <span>@{u.username}</span>
-              <button onClick={() => navigate(`/profile/${u._id}`)}>
-                View
-              </button>
-            </div>
-          ))}
+        <div className="ig-empty-feed">
+
+          <div className="ig-icon">
+            <i className="bi bi-camera"></i>
+          </div>
+
+          <h2>No Posts Yet</h2>
+          <p className="ig-subtext">
+            When you follow people, you’ll see their posts here.
+          </p>
+
+          <h3 className="ig-suggest-title">Suggested For You</h3>
+
+          <div className="ig-suggest-grid">
+            {users.map((u) => (
+              <div className="ig-suggest-card" key={u._id}>
+                <img
+                  src={u.dp ? `http://localhost:5000/${u.dp}` : "/default.png"}
+                  className="ig-suggest-img"
+                  alt=""
+                />
+                <p className="ig-suggest-username">@{u.username}</p>
+                <button
+                  className="ig-view-btn"
+                  onClick={() => navigate(`/profile/${u._id}`)}
+                >
+                  View
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {/* FEED POSTS */}
       {posts.map((post) => (
         <div className="post-card" key={post._id}>
+
           <div
             className="post-header"
             onClick={() => navigate(`/profile/${post.user._id}`)}
@@ -115,14 +135,19 @@ function Feed() {
                   : "/default.png"
               }
               className="post-dp"
+              alt=""
             />
             <span className="post-username">@{post.user.username}</span>
           </div>
 
-          <img
-            src={`http://localhost:5000/${post.image}`}
-            className="post-image"
-          />
+          {/* FIXED IMAGE RATIO */}
+          <div className="post-img-box">
+            <img
+              src={`http://localhost:5000/${post.image}`}
+              className="post-image"
+              alt=""
+            />
+          </div>
 
           <div className="post-actions">
             <button className="like-btn" onClick={() => toggleLike(post)}>
@@ -159,6 +184,7 @@ function Feed() {
               }}
             />
           </div>
+
         </div>
       ))}
 

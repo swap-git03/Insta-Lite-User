@@ -1,19 +1,17 @@
-/* WRAPS SIDEBAR + FEED */
+/* WRAP SIDEBAR + CONTENT */
 .layout {
   display: flex;
   width: 100%;
-  margin-top: 80px; /* EXACT NAVBAR HEIGHT */
+  margin-top: 80px;
 }
 
-/* CONTENT AREA */
+/* THIS FIXES CENTERING!!! */
 .layout-content {
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: center;  /* center feed */
   padding: 20px;
-
-  /* KEEP feed centered while sidebar exists */
-  margin-left: 220px; /* same as sidebar width */
+  margin-left: 220px;       /* sidebar width */
 }
 
 /* MOBILE */

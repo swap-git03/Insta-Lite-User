@@ -8,20 +8,29 @@ function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [dp, setDp] = useState(null);
   const [msg, setMsg] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
-        username,
-        email,
-        password,
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("email", email);
+      formData.append("password", password);
+
+      if (dp) {
+        formData.append("dp", dp);
+      }
+
+      await axios.post("http://localhost:5000/api/auth/register", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       setMsg("Registration successful! Redirecting...");
       setTimeout(() => (window.location.href = "/login"), 1500);
+
     } catch (err) {
       setMsg("Error while registering");
     }
@@ -39,7 +48,14 @@ function Register() {
 
           {msg && <p className="info">{msg}</p>}
 
-          <form onSubmit={handleRegister}>
+          <form onSubmit={handleRegister} encType="multipart/form-data">
+            
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setDp(e.target.files[0])}
+            />
+
             <input
               type="text"
               placeholder="Username"

@@ -123,7 +123,7 @@
 
 /* ================= FOOTER ================= */
 .sidebar-footer {
-  margin-top: 30px;
+  margin-top: 440px;
   padding-top: 15px;
   border-top: 1px solid #333;
 }
@@ -131,4 +131,5 @@
 .settings-btn {
   color: #bbb;
   font-size: 15px;
+  margin-top: 60px;
 }
