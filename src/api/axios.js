@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://swap-insta-backend.onrender.com/api",
+baseURL: "https://swap-insta-backend.onrender.com",
 });
 
 // Automatically attach token
