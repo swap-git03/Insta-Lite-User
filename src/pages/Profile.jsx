@@ -25,16 +25,17 @@ function Profile() {
   const openMenu = (post) => setMenuPost(post);
   const closeMenu = () => setMenuPost(null);
 
-  // FIXED: convert dp/image to full backend URL
   const fileURL = (path) => {
     if (!path) return "/default.png";
+  
+    // Cloudinary URL → return as is
     if (path.startsWith("http")) return path;
-    return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
+  
+    // Local fallback (not used for Cloudinary)
+    return `https://swap-insta-backend.onrender.com/${path}`;
   };
+  
 
-  // ==================
-  // FETCH PROFILE
-  // ==================
   const fetchUser = async () => {
     try {
       const res = await API.get(`/users/profile/${id}`);
@@ -46,9 +47,7 @@ function Profile() {
     }
   };
 
-  // ==================
-  // FETCH POSTS
-  // ==================
+
   const fetchPosts = async () => {
     try {
       const res = await API.get(`/users/posts/${id}`);
@@ -63,9 +62,7 @@ function Profile() {
     fetchPosts();
   }, [id]);
 
-  // ==================
-  // FOLLOW / UNFOLLOW
-  // ==================
+
   const toggleFollow = async () => {
     try {
       await API.put(`/users/${isFollowing ? "unfollow" : "follow"}/${id}`, {});
@@ -75,9 +72,7 @@ function Profile() {
     }
   };
 
-  // ==================
-  // DELETE POST
-  // ==================
+
   const deletePost = async (postId) => {
     if (!window.confirm("Delete this post?")) return;
 
@@ -90,9 +85,7 @@ function Profile() {
     }
   };
 
-  // ==================
-  // EDIT POST
-  // ==================
+
   const editPost = async (post) => {
     const newCaption = prompt("Enter new caption:", post.caption);
     if (newCaption === null) return;
@@ -116,9 +109,7 @@ function Profile() {
   return (
     <div className="profile-wrapper">
 
-      {/* ====================== */}
-      {/* HEADER */}
-      {/* ====================== */}
+     
       <div className="profile-header">
         <img
           src={fileURL(user.dp)}
@@ -166,9 +157,6 @@ function Profile() {
         </div>
       </div>
 
-      {/* ====================== */}
-      {/* POSTS GRID */}
-      {/* ====================== */}
       <div className="profile-posts-grid">
         {posts.map((p) => (
           <div className="post-box" key={p._id}>
@@ -188,10 +176,7 @@ function Profile() {
         ))}
       </div>
 
-      {/* ====================== */}
-      {/* EDIT/DELETE MENU */}
-      {/* ====================== */}
-      {menuPost && (
+  {menuPost && (
         <div className="menu-overlay" onClick={closeMenu}>
           <div className="menu-box" onClick={(e) => e.stopPropagation()}>
             <p

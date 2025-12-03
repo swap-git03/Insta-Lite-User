@@ -19,12 +19,16 @@ function Feed() {
   /* ------------------------------
         FIXED IMAGE URL FOR BACKEND
   ------------------------------- */
- const fileURL = (path) => {
-  if (!path) return "/default.png";
-  if (path.startsWith("http")) return path;
-  return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
-};
-
+  const fileURL = (path) => {
+    if (!path) return "/default.png";
+  
+    // Cloudinary URLs (already working)
+    if (path.startsWith("http")) return path;
+  
+    // Render backend static uploads
+    return `https://swap-insta-backend.onrender.com/${path}`;
+  };
+  
 
   /* ------------------------------
            FETCH FEED

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { useEffect, useState } from "react";
 import API from "../api/axios";
 import "../styles/Users.css";
@@ -8,7 +9,6 @@ function Users() {
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/immutability
     fetchUsers();
   }, []);
 
@@ -39,11 +39,13 @@ function Users() {
     }
   };
 
-  // FIXED: convert DP to correct backend URL
+  // ✔ FINAL CORRECT VERSION
   const fileURL = (path) => {
-    if (!path) return "/default.png";
-    if (path.startsWith("http")) return path;
-    return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
+    if (!path) return "/default.png";          // fallback
+    if (path.startsWith("http")) return path;  // Cloudinary URLs
+
+    // local uploads on Render
+    return `https://swap-insta-backend.onrender.com/${path}`;
   };
 
   return (

@@ -10,25 +10,14 @@ function Sidebar({ user, suggestions }) {
   const safeUser = user || {};
   const safeSuggestions = Array.isArray(suggestions) ? suggestions : [];
 
-  /* ------------------------------
-      FIXED IMAGE URL GENERATOR
-  ------------------------------ */
-/* ------------------------------
-      FIXED IMAGE URL GENERATOR
------------------------------- */
-const fileURL = (path) => {
-  if (!path) return "/default.png";
-
-  if (path.startsWith("http")) return path;
-
-  // FIX: remove /api from baseURL for images
-  return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
-};
+  const fileURL = (path) => {
+    if (!path) return "/default.png";
+    if (path.startsWith("http")) return path;
+    return `https://swap-insta-backend.onrender.com/${path}`;
+  };
+  
 
 
-  /* ============================
-     HIDE BUTTON ON SCROLL 
-  ============================ */
   useEffect(() => {
     let lastScrollY = window.scrollY;
 

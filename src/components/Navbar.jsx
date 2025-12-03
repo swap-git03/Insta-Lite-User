@@ -71,14 +71,16 @@ function Navbar() {
     }
   };
 
-const fileURL = (path) => {
-  if (!path) return "/default.png";
-
-  if (path.startsWith("http")) return path;
-
-  return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
-};
-
+  const fileURL = (path) => {
+    if (!path) return "/default.png";
+    if (path.startsWith("http")) return path;
+  
+    return path.startsWith("uploads")
+      ? `https://swap-insta-backend.onrender.com/${path}`
+      : path;
+  };
+  
+  
 
   return (
     <nav className={`nav ${showNav ? "nav-show" : "nav-hide"}`}>
