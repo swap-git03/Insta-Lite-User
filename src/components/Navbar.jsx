@@ -70,15 +70,14 @@ function Navbar() {
       console.log(err);
     }
   };
+const fileURL = (path) => {
+  if (!path) return "/default.png";
+  if (path.startsWith("http")) return path;
 
-  const fileURL = (path) => {
-    if (!path) return "/default.png";
-    if (path.startsWith("http")) return path;
-  
-    return path.startsWith("uploads")
-      ? `https://swap-insta-backend.onrender.com/${path}`
-      : path;
-  };
+  const clean = path.replace(/^\//, "");
+  return `https://swap-insta-backend.onrender.com/${clean}`;
+};
+
   
   
 

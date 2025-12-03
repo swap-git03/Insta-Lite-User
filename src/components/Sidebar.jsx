@@ -13,8 +13,10 @@ function Sidebar({ user, suggestions }) {
   const fileURL = (path) => {
     if (!path) return "/default.png";
     if (path.startsWith("http")) return path;
-    return `https://swap-insta-backend.onrender.com/${path}`;
+  
+    return `https://swap-insta-backend.onrender.com${path}`;
   };
+  
   
 
 

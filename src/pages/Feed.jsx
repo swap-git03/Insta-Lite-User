@@ -22,12 +22,15 @@ function Feed() {
   const fileURL = (path) => {
     if (!path) return "/default.png";
   
-    // Cloudinary URLs (already working)
+    // For Cloudinary URLs
     if (path.startsWith("http")) return path;
   
-    // Render backend static uploads
-    return `https://swap-insta-backend.onrender.com/${path}`;
+    // Fix double slash issues: /uploads/abc → uploads/abc
+    const clean = path.startsWith("/") ? path.slice(1) : path;
+  
+    return `https://swap-insta-backend.onrender.com/${clean}`;
   };
+  
   
 
   /* ------------------------------

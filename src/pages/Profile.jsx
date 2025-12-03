@@ -27,12 +27,12 @@ function Profile() {
 
   const fileURL = (path) => {
     if (!path) return "/default.png";
+    if (path.startsWith("http")) return path; // Cloudinary safe
   
-    // Cloudinary URL → return as is
-    if (path.startsWith("http")) return path;
+    // Always remove leading slash to avoid double slashes
+    const clean = path.startsWith("/") ? path.slice(1) : path;
   
-    // Local fallback (not used for Cloudinary)
-    return `https://swap-insta-backend.onrender.com/${path}`;
+    return `https://swap-insta-backend.onrender.com/${clean}`;
   };
   
 

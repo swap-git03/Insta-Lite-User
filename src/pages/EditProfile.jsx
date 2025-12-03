@@ -10,12 +10,14 @@ function EditProfile() {
   const currentUser = stored ? JSON.parse(stored) : null;
   const userId = currentUser?._id;
 
-const fileURL = (path) => {
-  if (!path) return "/default.png";
-  if (path.startsWith("http")) return path;
-  return `${API.defaults.baseURL.replace("/api", "")}/${path}`;
-};
-
+  const fileURL = (path) => {
+    if (!path) return "/default.png";
+    if (path.startsWith("http")) return path;
+  
+    // Backend returns "/uploads/..."
+    return `https://swap-insta-backend.onrender.com${path}`;
+  };
+  
 
   const [username, setUsername] = useState(currentUser?.username || "");
   const [bio, setBio] = useState(currentUser?.bio || "");
@@ -23,6 +25,7 @@ const fileURL = (path) => {
   const [preview, setPreview] = useState(
     currentUser?.dp ? fileURL(currentUser.dp) : "/default.png"
   );
+  
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

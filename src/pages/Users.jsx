@@ -43,10 +43,10 @@ function Users() {
   const fileURL = (path) => {
     if (!path) return "/default.png";          // fallback
     if (path.startsWith("http")) return path;  // Cloudinary URLs
-
-    // local uploads on Render
-    return `https://swap-insta-backend.onrender.com/${path}`;
+  
+    return `https://swap-insta-backend.onrender.com${path}`;   // local uploads
   };
+  
 
   return (
     <div className="users-wrapper">
