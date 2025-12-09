@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
- 
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../api/axios";
@@ -19,34 +19,30 @@ function Profile() {
     window.location.href = "/login";
   };
 
-  // Post menu state
+  // MENU STATE
   const [menuPost, setMenuPost] = useState(null);
-
   const openMenu = (post) => setMenuPost(post);
   const closeMenu = () => setMenuPost(null);
 
+  // FINAL CORRECT LOCAL FILE URL FIX
   const fileURL = (path) => {
-    if (!path) return "/default.png";
-    if (path.startsWith("http")) return path; // Cloudinary safe
-  
-    // Always remove leading slash to avoid double slashes
-    const clean = path.startsWith("/") ? path.slice(1) : path;
-  
-    return `https://swap-insta-backend.onrender.com/${clean}`;
+    if (!path || path === "null" || path === "undefined")
+      return "/default_dp.png";
+
+    const clean = path.replace(/^\//, ""); // remove leading slash
+
+    return `http://localhost:5000/${clean}`;
   };
-  
 
   const fetchUser = async () => {
     try {
       const res = await API.get(`/users/profile/${id}`);
-
       setUser(res.data);
       setIsFollowing(res.data.followers.includes(loggedUser._id));
     } catch (err) {
       console.log("Profile fetch error:", err);
     }
   };
-
 
   const fetchPosts = async () => {
     try {
@@ -62,15 +58,34 @@ function Profile() {
     fetchPosts();
   }, [id]);
 
+const toggleFollow = async () => {
+  try {
+    if (isFollowing) {
+      // user is already following → unfollow
+      await API.put(`/users/unfollow/${id}`, {});
 
-  const toggleFollow = async () => {
-    try {
-      await API.put(`/users/${isFollowing ? "unfollow" : "follow"}/${id}`, {});
-      fetchUser();
-    } catch (err) {
-      console.log(err);
+      // update UI instantly
+      setIsFollowing(false);
+      setUser((prev) => ({
+        ...prev,
+        followers: prev.followers.filter((uid) => uid !== loggedUser._id),
+      }));
+
+    } else {
+      // user is not following → follow
+      await API.put(`/users/follow/${id}`, {});
+
+      // update UI instantly
+      setIsFollowing(true);
+      setUser((prev) => ({
+        ...prev,
+        followers: [...prev.followers, loggedUser._id],
+      }));
     }
-  };
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 
   const deletePost = async (postId) => {
@@ -84,7 +99,6 @@ function Profile() {
       console.log("Delete error:", err);
     }
   };
-
 
   const editPost = async (post) => {
     const newCaption = prompt("Enter new caption:", post.caption);
@@ -108,14 +122,8 @@ function Profile() {
 
   return (
     <div className="profile-wrapper">
-
-     
       <div className="profile-header">
-        <img
-          src={fileURL(user.dp)}
-          className="profile-dp"
-          alt="dp"
-        />
+        <img src={fileURL(user.dp)} className="profile-dp" alt="dp" />
 
         <div className="profile-info">
           <div className="profile-row">
@@ -142,15 +150,9 @@ function Profile() {
           )}
 
           <div className="profile-stats">
-            <span>
-              <b>{posts.length}</b> posts
-            </span>
-            <span>
-              <b>{user.followers.length}</b> followers
-            </span>
-            <span>
-              <b>{user.following.length}</b> following
-            </span>
+            <span><b>{posts.length}</b> posts</span>
+            <span><b>{user.followers.length}</b> followers</span>
+            <span><b>{user.following.length}</b> following</span>
           </div>
 
           <p className="profile-bio">{user.bio || "No bio yet."}</p>
@@ -176,13 +178,10 @@ function Profile() {
         ))}
       </div>
 
-  {menuPost && (
+      {menuPost && (
         <div className="menu-overlay" onClick={closeMenu}>
           <div className="menu-box" onClick={(e) => e.stopPropagation()}>
-            <p
-              className="menu-item delete"
-              onClick={() => deletePost(menuPost._id)}
-            >
+            <p className="menu-item delete" onClick={() => deletePost(menuPost._id)}>
               Delete Post
             </p>
 

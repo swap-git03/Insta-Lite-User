@@ -16,25 +16,14 @@ function Feed() {
 
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
-  /* ------------------------------
-        FIXED IMAGE URL FOR BACKEND
-  ------------------------------- */
   const fileURL = (path) => {
-    if (!path) return "/default.png";
-  
-    // For Cloudinary URLs
-    if (path.startsWith("http")) return path;
-  
-    // Fix double slash issues: /uploads/abc → uploads/abc
-    const clean = path.startsWith("/") ? path.slice(1) : path;
-  
-    return `https://swap-insta-backend.onrender.com/${clean}`;
+    if (!path) return "/default_dp.png";
+    const clean = path.replace(/^\//, "");
+    return `http://localhost:5000/${clean}`;
   };
-  
-  
 
   /* ------------------------------
-           FETCH FEED
+            FETCH FEED
   ------------------------------- */
   const fetchFeed = async () => {
     try {
@@ -46,7 +35,7 @@ function Feed() {
   };
 
   /* ------------------------------
-        FETCH USERS (Suggestions)
+         FETCH USERS
   ------------------------------- */
   const fetchUsers = async () => {
     try {
@@ -63,19 +52,32 @@ function Feed() {
   }, []);
 
   /* ------------------------------
-              LIKE POST
+              LIKE TOGGLE
+      (INSTANT FRONTEND UPDATE)
   ------------------------------- */
   const toggleLike = async (post) => {
     try {
       await API.post("/posts/like", { postId: post._id });
-      fetchFeed();
+
+      setPosts((prev) =>
+        prev.map((p) =>
+          p._id === post._id
+            ? {
+                ...p,
+                likes: p.likes.includes(currentUser._id)
+                  ? p.likes.filter((id) => id !== currentUser._id)
+                  : [...p.likes, currentUser._id],
+              }
+            : p
+        )
+      );
     } catch (err) {
       console.log(err);
     }
   };
 
   /* ------------------------------
-           ADD COMMENT
+            ADD COMMENT
   ------------------------------- */
   const addComment = async (postId, text) => {
     if (!text.trim()) return;
@@ -113,11 +115,7 @@ function Feed() {
           <div className="ig-suggest-grid">
             {users.map((u) => (
               <div className="ig-suggest-card" key={u._id}>
-                <img
-                  src={fileURL(u.dp)}
-                  className="ig-suggest-img"
-                  alt=""
-                />
+                <img src={fileURL(u.dp)} className="ig-suggest-img" alt="" />
                 <p className="ig-suggest-username">@{u.username}</p>
 
                 <button
@@ -141,21 +139,13 @@ function Feed() {
             className="post-header"
             onClick={() => navigate(`/profile/${post.user._id}`)}
           >
-            <img
-              src={fileURL(post.user.dp)}
-              className="post-dp"
-              alt=""
-            />
+            <img src={fileURL(post.user.dp)} className="post-dp" alt="" />
             <span className="post-username">@{post.user.username}</span>
           </div>
 
           {/* IMAGE */}
           <div className="post-img-box">
-            <img
-              src={fileURL(post.image)}
-              className="post-image"
-              alt=""
-            />
+            <img src={fileURL(post.image)} className="post-image" alt="" />
           </div>
 
           {/* ACTIONS */}

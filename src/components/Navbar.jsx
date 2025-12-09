@@ -71,14 +71,16 @@ function Navbar() {
     }
   };
 const fileURL = (path) => {
-  if (!path) return "/default.png";
-  if (path.startsWith("http")) return path;
+  if (!path || path === "null" || path === "undefined")
+    return "/default_dp.png";
 
-  const clean = path.replace(/^\//, "");
-  return `https://swap-insta-backend.onrender.com/${clean}`;
+  // ensure path always starts with /uploads/
+  let clean = path.replace(/^\/+/, "");  // remove leading slashes
+  if (!clean.startsWith("uploads/")) clean = `uploads/${clean}`;
+
+  return `http://localhost:5000/${clean}`;
 };
 
-  
   
 
   return (

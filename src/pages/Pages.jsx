@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
- 
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../api/axios";
@@ -13,22 +13,33 @@ function Profile() {
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // FETCH PROFILE USER
+  const isOwnProfile = loggedUser._id === id;
+
+  // LOCAL backend file loader
+  const fileURL = (path) => {
+    if (!path) return "/default_dp.png";
+    const clean = path.replace(/^\//, "");
+    return `http://localhost:5000/${clean}`;
+  };
+
+  // FETCH PROFILE
   const fetchUser = async () => {
     try {
       const res = await API.get(`/users/profile/${id}`);
-
       setUser(res.data);
-      setIsFollowing(res.data.followers.includes(loggedUser._id));
+
+      if (!isOwnProfile) {
+        setIsFollowing(res.data.followers.includes(loggedUser._id));
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  // FETCH POSTS FROM THAT USER
+  // FETCH POSTS
   const fetchPosts = async () => {
     try {
-      const res = await API.get(`/posts/user/${id}`);
+      const res = await API.get(`/users/posts/${id}`);  // correct backend route
       setPosts(res.data);
     } catch (err) {
       console.log(err);
@@ -40,39 +51,52 @@ function Profile() {
     fetchPosts();
   }, [id]);
 
+  // FOLLOW / UNFOLLOW
   const toggleFollow = async () => {
     try {
-      await API.put(
-        `/users/${isFollowing ? "unfollow" : "follow"}/${id}`,
-        {}
-      );
-
-      fetchUser(); 
+      if (isFollowing) {
+        await API.put(`/users/unfollow/${id}`);
+        setIsFollowing(false);
+        setUser((prev) => ({
+          ...prev,
+          followers: prev.followers.filter((uid) => uid !== loggedUser._id),
+        }));
+      } else {
+        await API.put(`/users/follow/${id}`);
+        setIsFollowing(true);
+        setUser((prev) => ({
+          ...prev,
+          followers: [...prev.followers, loggedUser._id],
+        }));
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
-  if (!user) return <p style={{ color: "white", marginTop: "90px" }}>Loading...</p>;
+  if (!user)
+    return (
+      <p style={{ color: "white", marginTop: "90px", textAlign: "center" }}>
+        Loading...
+      </p>
+    );
 
   return (
     <div className="profile-wrapper">
 
-      {/* TOP SECTION */}
+      {/* HEADER */}
       <div className="profile-header">
-        
         <img
-          src={user.dp ? `${API.defaults.baseURL.replace("/api","")}/${user.dp}` : "/default.png"}
+          src={fileURL(user.dp)}
           className="profile-dp"
           alt="dp"
         />
 
         <div className="profile-info">
-
           <div className="profile-row">
             <h2>{user.username}</h2>
 
-            {loggedUser._id === id ? (
+            {isOwnProfile ? (
               <button className="edit-btn">Edit Profile</button>
             ) : (
               <button className="follow-btn" onClick={toggleFollow}>
@@ -96,7 +120,7 @@ function Profile() {
         {posts.map((p) => (
           <img
             key={p._id}
-            src={`${API.defaults.baseURL.replace("/api","")}/${p.image}`}
+            src={fileURL(p.image)}
             alt="post"
             className="profile-post"
             onClick={() => (window.location.href = `/post/${p._id}`)}

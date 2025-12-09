@@ -15,7 +15,15 @@ function Users() {
   const fetchUsers = async () => {
     try {
       const res = await API.get("/users/all");
-      setUsers(res.data);
+
+      // Normalize followers (convert ObjectId → string)
+      const cleaned = res.data.map((u) => ({
+        ...u,
+        followers: u.followers.map((f) => String(f)),
+      }));
+
+      // Remove self
+      setUsers(cleaned.filter((u) => u._id !== currentUser._id));
     } catch (err) {
       console.log("Users error:", err);
     }
@@ -23,8 +31,16 @@ function Users() {
 
   const followUser = async (id) => {
     try {
-      await API.put(`/users/follow/${id}`, {});
-      fetchUsers();
+      await API.put(`/users/follow/${id}`);
+
+      // Instant UI update
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === id
+            ? { ...u, followers: [...u.followers, currentUser._id] }
+            : u
+        )
+      );
     } catch (err) {
       console.log(err);
     }
@@ -32,21 +48,29 @@ function Users() {
 
   const unfollowUser = async (id) => {
     try {
-      await API.put(`/users/unfollow/${id}`, {});
-      fetchUsers();
+      await API.put(`/users/unfollow/${id}`);
+
+      // Instant UI update
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === id
+            ? { ...u, followers: u.followers.filter((f) => f !== currentUser._id) }
+            : u
+        )
+      );
     } catch (err) {
       console.log(err);
     }
   };
 
-  // ✔ FINAL CORRECT VERSION
+  // FIXED LOCAL BACKEND DP URL
   const fileURL = (path) => {
-    if (!path) return "/default.png";          // fallback
-    if (path.startsWith("http")) return path;  // Cloudinary URLs
-  
-    return `https://swap-insta-backend.onrender.com${path}`;   // local uploads
+    if (!path || path === "null" || path === "undefined")
+      return "/default_dp.png";
+
+    const clean = path.startsWith("/") ? path : `/${path}`;
+    return `http://localhost:5000${clean}`;
   };
-  
 
   return (
     <div className="users-wrapper">
@@ -56,11 +80,7 @@ function Users() {
           {users.map((u) => (
             <div className="user-card" key={u._id}>
               <div className="user-left">
-                <img
-                  src={fileURL(u.dp)}
-                  className="user-dp"
-                  alt="dp"
-                />
+                <img src={fileURL(u.dp)} className="user-dp" alt="dp" />
 
                 <div>
                   <p className="u-name">{u.username}</p>

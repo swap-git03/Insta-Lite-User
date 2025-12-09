@@ -20,9 +20,7 @@ function Register() {
       formData.append("email", email);
       formData.append("password", password);
 
-      if (dp) {
-        formData.append("dp", dp);
-      }
+      if (dp) formData.append("dp", dp);
 
       await API.post("/auth/register", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -32,7 +30,7 @@ function Register() {
       setTimeout(() => (window.location.href = "/login"), 1500);
 
     } catch (err) {
-      setMsg("Error while registering");
+      setMsg(err.response?.data?.error || "Error while registering");
     }
   };
 
@@ -49,7 +47,7 @@ function Register() {
           {msg && <p className="info">{msg}</p>}
 
           <form onSubmit={handleRegister} encType="multipart/form-data">
-            
+
             <input
               type="file"
               accept="image/*"
