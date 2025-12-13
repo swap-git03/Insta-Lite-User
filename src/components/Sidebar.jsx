@@ -10,16 +10,25 @@ function Sidebar({ user, suggestions }) {
   const safeUser = user || {};
   const safeSuggestions = Array.isArray(suggestions) ? suggestions : [];
 
+  /* =====================================================
+        PERFECT LOCAL BACKEND IMAGE HANDLER (FINAL)
+  ====================================================== */
   const fileURL = (path) => {
-    if (!path) return "/default.png";
-    if (path.startsWith("http")) return path;
-  
-    return `https://swap-insta-backend.onrender.com${path}`;
+    if (!path || path === "null" || path === "undefined")
+      return "/default_dp.png"; // from frontend public folder
+
+    // remove leading slash
+    let clean = path.replace(/^\/+/, "");
+
+    // ensure uploads/ is included
+    if (!clean.startsWith("uploads/")) clean = "uploads/" + clean;
+
+    return `http://localhost:5000/${clean}`;
   };
-  
-  
 
-
+  /* =====================================================
+        AUTO-HIDE SIDEBAR BUTTON ON SCROLL
+  ====================================================== */
   useEffect(() => {
     let lastScrollY = window.scrollY;
 
@@ -39,9 +48,7 @@ function Sidebar({ user, suggestions }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [open]);
 
-  /* ============================
-     DISABLE BACKGROUND SCROLL 
-  ============================ */
+  /* Disable background scroll when sidebar open */
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
   }, [open]);
@@ -60,13 +67,15 @@ function Sidebar({ user, suggestions }) {
 
       {/* SIDEBAR */}
       <aside className={`sidebar ${open ? "open" : ""}`}>
-        {/* USER BOX */}
+
+        {/* USER INFO */}
         <div className="sidebar-user-box">
           <img
             src={fileURL(safeUser.dp)}
             className="sidebar-user-dp"
             alt="dp"
           />
+
           <div>
             <p className="sb-username">@{safeUser.username || "guest"}</p>
 
@@ -78,12 +87,15 @@ function Sidebar({ user, suggestions }) {
           </div>
         </div>
 
-        {/* MENU */}
+        {/* MAIN MENU */}
         <nav className="sidebar-menu">
           <Link to="/feed">🏠 Home</Link>
           <Link to="/create">➕ Create</Link>
           <Link to="/users">👥 People</Link>
-          {safeUser._id && <Link to={`/profile/${safeUser._id}`}>👤 Profile</Link>}
+
+          {safeUser._id && (
+            <Link to={`/profile/${safeUser._id}`}>👤 Profile</Link>
+          )}
         </nav>
 
         {/* SUGGESTIONS */}
@@ -117,6 +129,7 @@ function Sidebar({ user, suggestions }) {
             </Link>
           )}
         </div>
+
       </aside>
     </>
   );
