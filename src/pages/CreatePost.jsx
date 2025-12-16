@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useCallback } from "react";
 import API from "../api/axios";
 import Cropper from "react-easy-crop";
@@ -10,12 +11,10 @@ function CreatePost() {
 
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [caption, setCaption] = useState("");
+  const [aspect, setAspect] = useState(1);
 
-  // aspect ratio state
-  const [aspect, setAspect] = useState(1); 
   const onCropComplete = useCallback((_, croppedPixels) => {
     setCroppedAreaPixels(croppedPixels);
   }, []);
@@ -29,29 +28,31 @@ function CreatePost() {
   };
 
   const handlePost = async () => {
-    if (!image) {
-      alert("Please select an image!");
+    if (!preview || !croppedAreaPixels) {
+      alert("Please select & crop an image");
       return;
     }
 
-    const croppedFile = await getCroppedImg(preview, croppedAreaPixels);
-
-    const formData = new FormData();
-    formData.append("image", croppedFile, "cropped.jpg");
-    formData.append("caption", caption);
-
     try {
-      await API.post("/posts", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      // 🔥 CRITICAL FIX: Blob → File
+      const croppedBlob = await getCroppedImg(preview, croppedAreaPixels);
+      const croppedFile = new File(
+        [croppedBlob],
+        "post.jpg",
+        { type: "image/jpeg" }
+      );
+
+      const formData = new FormData();
+      formData.append("image", croppedFile); // MUST be "image"
+      formData.append("caption", caption);
+
+      await API.post("/posts", formData);
 
       alert("Post created!");
       window.location.href = "/feed";
     } catch (err) {
-      console.log(err);
-      alert("Something went wrong!");
+      console.error("Create post error:", err);
+      alert("Failed to create post");
     }
   };
 
@@ -59,29 +60,11 @@ function CreatePost() {
     <div className="create-post-container">
       <h2>Create New Post</h2>
 
-      {/* Aspect Ratio Buttons */}
       {preview && (
         <div className="aspect-buttons">
-          <button
-            className={aspect === 1 ? "active" : ""}
-            onClick={() => setAspect(1)}
-          >
-            1:1
-          </button>
-
-          <button
-            className={aspect === 4 / 5 ? "active" : ""}
-            onClick={() => setAspect(4 / 5)}
-          >
-            4:5
-          </button>
-
-          <button
-            className={aspect === 16 / 9 ? "active" : ""}
-            onClick={() => setAspect(16 / 9)}
-          >
-            16:9
-          </button>
+          <button className={aspect === 1 ? "active" : ""} onClick={() => setAspect(1)}>1:1</button>
+          <button className={aspect === 4 / 5 ? "active" : ""} onClick={() => setAspect(4 / 5)}>4:5</button>
+          <button className={aspect === 16 / 9 ? "active" : ""} onClick={() => setAspect(16 / 9)}>16:9</button>
         </div>
       )}
 
@@ -99,7 +82,6 @@ function CreatePost() {
         </div>
       )}
 
-      {/* Zoom Slider */}
       {preview && (
         <div className="zoom-slider">
           <input
@@ -113,7 +95,6 @@ function CreatePost() {
         </div>
       )}
 
-      {/* File Input */}
       <input
         type="file"
         accept="image/*"
@@ -121,13 +102,12 @@ function CreatePost() {
         className="file-input"
       />
 
-      {/* Caption */}
       <textarea
         placeholder="Write a caption..."
         className="caption-input"
         value={caption}
         onChange={(e) => setCaption(e.target.value)}
-      ></textarea>
+      />
 
       <button className="post-btn" onClick={handlePost}>
         Post
