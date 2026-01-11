@@ -34,7 +34,6 @@ function CreatePost() {
     }
 
     try {
-      // 🔥 CRITICAL FIX: Blob → File
       const croppedBlob = await getCroppedImg(preview, croppedAreaPixels);
       const croppedFile = new File(
         [croppedBlob],
@@ -43,7 +42,7 @@ function CreatePost() {
       );
 
       const formData = new FormData();
-      formData.append("image", croppedFile); // MUST be "image"
+      formData.append("image", croppedFile); 
       formData.append("caption", caption);
 
       await API.post("/posts", formData);
