@@ -9,7 +9,6 @@ body {
   box-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
 a { color: #bbb; }
-/* Prevent content from going under navbar */
 body {
   padding-top: 80px !important;
 }

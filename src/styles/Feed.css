@@ -74,7 +74,6 @@
   color: white;
 }
 
-/* LIKE TEXT ALIGNED CENTER BELOW ICON */
 .post-likes {
   margin-left: 10px;
   font-size: 15px;
@@ -117,11 +116,10 @@
   border: none;
   cursor: pointer;
 }
-/* CAMERA ICON — Bigger & Centered */
 .ig-icon i.bi-camera {
-  font-size: 45px;     /* increase size */
-  color: #888;         /* optional: softer gray like Instagram */
+  font-size: 45px;    
+  color: #888;        
   display: block;
   margin: 0 auto 10px;
-  margin-left: 12px; /* center + spacing */
+  margin-left: 12px; 
 }

@@ -10,9 +10,6 @@ function Sidebar({ user, suggestions }) {
   const safeUser = user || {};
   const safeSuggestions = Array.isArray(suggestions) ? suggestions : [];
 
-  /* =====================================================
-        PERFECT LOCAL BACKEND IMAGE HANDLER (FINAL)
-  ====================================================== */
   const fileURL = (path) => {
     if (!path || path === "null" || path === "undefined")
       return "/default_dp.png"; // from frontend public folder
@@ -26,9 +23,7 @@ function Sidebar({ user, suggestions }) {
     return `http://localhost:5000/${clean}`;
   };
 
-  /* =====================================================
-        AUTO-HIDE SIDEBAR BUTTON ON SCROLL
-  ====================================================== */
+  /* ---------------- AUTO-HIDE SIDEBAR BUTTON ON SCROLL ----------------*/
   useEffect(() => {
     let lastScrollY = window.scrollY;
 
